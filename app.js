@@ -22,7 +22,35 @@ const webhookRouter = require('./routes/webhook');
 const verifyToken = require('./middlewares/verifyToken');
 const can = require('./middlewares/permission');
 
+const swaggerUi = require('swagger-ui-express');
+const swaggerJSDoc = require('swagger-jsdoc');
+
 const app = express();
+
+const swaggerDefinition = {
+  info: {
+    title: 'BWA Microservice API',
+    version: '1.0.0',
+    description: 'API documentation for BWA Microservice',
+  },
+  securityDefinitions: {
+    bearerAuth: {
+      type: 'apiKey',
+      name: 'Authorization',
+      in: 'header',
+    },
+  },
+  basePath: '/',
+};
+
+const options = {
+  swaggerDefinition,
+  apis: ['./routes/*.js'],
+};
+
+const swaggerSpec = swaggerJSDoc(options);
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.use(cors());
 app.use(logger('dev'));
